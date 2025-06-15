@@ -1,0 +1,13 @@
+[build]
+  base    = "apps/web"
+  command = "npm run build"
+  publish = ".next"
+
+[functions]
+  directory = "../../apps/functions"
+
+[dev]
+  # full, absolute path returned by `which npm`
+  command     = "/Users/luckyshah/.nvm/versions/node/v22.16.0/bin/npm --workspace apps/web run dev"
+  targetPort  = 3000   # Next.js dev port
+  framework   = "#custom"

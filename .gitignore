@@ -1,0 +1,23 @@
+# Node / pnpm / yarn
+node_modules/
+.pnpm/
+dist/
+
+# Next.js + Turbopack + Netlify
+apps/*/.next/
+apps/*/.netlify/
+apps/*/out/
+apps/*/.turbo/
+
+# Prisma
+prisma/migrations/*/README.txt   # keep migration files but ignore README stubs
+*.db-journal
+
+# Env & IDE
+.env*
+!.env.example           # keep a template
+.idea/
+.vscode/
+
+# Mac / Linux noise
+.DS_Store
