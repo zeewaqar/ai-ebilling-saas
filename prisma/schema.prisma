@@ -13,6 +13,14 @@ enum Role {
   ADMIN
 }
 
+enum InvoiceStatus {        // ➊  NEW ENUM
+  DRAFT
+  SENT
+  PAID
+  VOID
+}
+
+
 /* ----------  MAIN MODELS  ---------- */
 model Tenant {
   id        String   @id @default(cuid())
@@ -26,6 +34,9 @@ model Tenant {
 model User {
   /* Auth.js primary key */
   id             String   @id @default(cuid())
+
+  firstName      String?
+  lastName       String?
 
   /* Credentials-provider fields */
   email          String   @unique
@@ -43,11 +54,36 @@ model User {
 }
 
 model Invoice {
-  id        String   @id @default(cuid())
-  number    String
-  tenantId  String
-  tenant    Tenant   @relation(fields: [tenantId], references: [id])
-  createdAt DateTime @default(now())
+  id              String        @id @default(cuid())
+  number          String
+  invoiceDate     DateTime      @default(now())
+  dueDate         DateTime
+  status          InvoiceStatus @default(DRAFT)
+
+  // Sender Details
+  senderName      String?
+  senderAddress   String?
+  senderEmail     String?
+  senderPhone     String?
+
+  // Client Details
+  clientName      String?
+  clientAddress   String?
+  clientEmail     String?
+  clientPhone     String?
+
+  // Line Items (JSON for simplicity, can be a separate model later)
+  lineItems       Json          @default("[]")
+
+  // Financials
+  subtotal        Decimal       @db.Decimal(12,2) @default(0)
+  taxAmount       Decimal       @db.Decimal(12,2) @default(0)
+  totalAmount     Decimal       @db.Decimal(12,2) @default(0)
+
+  tenantId        String
+  tenant          Tenant        @relation(fields: [tenantId], references: [id])
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt @default(now())
 }
 
 /* ----------  AUTH.JS SUPPORT TABLES  ---------- */

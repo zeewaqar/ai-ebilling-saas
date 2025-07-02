@@ -10,12 +10,14 @@ import type { User } from "next-auth";
 /* ----------  Module augmentation  ---------- */
 declare module "next-auth" {
   interface Session {
-    user: User & { tenantId: string };
+    user: User & { tenantId: string; firstName?: string; lastName?: string; };
   }
 }
 declare module "next-auth/jwt" {
   interface JWT {
     tenantId?: string;
+    firstName?: string;
+    lastName?: string;
   }
 }
 
@@ -43,7 +45,7 @@ export const authConfig: NextAuthOptions = {
         const email = credentials.email.toLowerCase();
         const user = await prisma.user.findUnique({
           where: { email },
-          select: { id: true, tenantId: true, hashedPassword: true }
+          select: { id: true, tenantId: true, hashedPassword: true, firstName: true, lastName: true }
         });
         if (!user) return null;
 
@@ -51,19 +53,25 @@ export const authConfig: NextAuthOptions = {
           credentials.password,
           user.hashedPassword
         );
-        return ok ? ({ id: user.id, tenantId: user.tenantId } as const) : null;
+        return ok ? ({ id: user.id, tenantId: user.tenantId, firstName: user.firstName, lastName: user.lastName } as const) : null;
       }
     })
   ],
 
   callbacks: {
     jwt({ token, user }) {
-      if (user) token.tenantId = (user as unknown as { tenantId: string }).tenantId;
+      if (user) {
+        token.tenantId = (user as unknown as { tenantId: string }).tenantId;
+        token.firstName = (user as unknown as { firstName?: string }).firstName;
+        token.lastName = (user as unknown as { lastName?: string }).lastName;
+      }
       return token;
     },
     session({ session, token }) {
       if (session.user && token.tenantId) {
         session.user.tenantId = token.tenantId;
+        session.user.firstName = token.firstName;
+        session.user.lastName = token.lastName;
       }
       return session;
     }
