@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 import { getServerSession } from "next-auth/next";
-import { authConfig } from "@/app/api/auth/[...nextauth]/route";
+import { authConfig } from "@/lib/auth";
 import { dbFor } from "@ai-ebilling/db/tenantGuard";
 import {
   Table,

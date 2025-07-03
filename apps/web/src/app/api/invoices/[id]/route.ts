@@ -1,5 +1,3 @@
-
-
 import { NextRequest, NextResponse } from 'next/server';
 
 import { dbFor } from '@ai-ebilling/db/tenantGuard';
@@ -11,7 +9,7 @@ export async function GET(
 ) {
   const { searchParams } = new URL(req.url);
   const tenantId = searchParams.get('tenantId');
-  const { id } = await params; // Await params here
+  const { id } = params;
 
   if (!tenantId) {
     return NextResponse.json({ error: 'Tenant ID is required' }, { status: 400 });
@@ -103,4 +101,3 @@ export async function DELETE(
 
   return new Response(null, { status: 204 });
 }
-
